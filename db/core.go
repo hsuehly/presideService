@@ -12,7 +12,8 @@ import (
 var dbInstance *gorm.DB
 
 func init() {
-	dsn := "root:hsueh095.@tcp(127.0.0.1:3306)/preside?charset=utf8mb4&parseTime=True&loc=Local"
+	//dsn := "root:hsueh095.@tcp(127.0.0.1:3306)/preside?charset=utf8mb4&parseTime=True&loc=Local"
+	dsn := "preside:hsueh095@tcp(39.107.92.94:3306)/preside?charset=utf8mb4&parseTime=True&loc=Local"
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{
 		SkipDefaultTransaction: false,
 		NamingStrategy: schema.NamingStrategy{

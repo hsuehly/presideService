@@ -3,69 +3,72 @@ package handler
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/hsuehly/presideService/Response"
+	"github.com/hsuehly/presideService/models"
 	"github.com/hsuehly/presideService/service"
-	"github.com/hsuehly/presideService/types"
 	"github.com/hsuehly/presideService/util"
 	"strconv"
 )
 
 func CreateOrder(c *gin.Context) {
-	//var orderDetail models.OrderDetails
+	var orderDetail models.OrderDetails
 	//orderDetail := make(map[string]interface{}, 7)
-	//err := c.BindJSON(&orderDetail)
-	//if err != nil {
-	//	util.Error(c, int(types.ApiCode.CONVERTFAILED), types.ApiCode.GetMessage(types.ApiCode.CONVERTFAILED))
-	//	return
-	//}
-	username, ok := c.GetPostForm("username")
-	if !ok {
-		util.Error(c, int(types.ApiCode.LCAKPARAMETERS), types.ApiCode.GetMessage(types.ApiCode.LCAKPARAMETERS))
-		return
-	}
-
-	phone, ok := c.GetPostForm("phone")
-	if !ok {
-		util.Error(c, int(types.ApiCode.LCAKPARAMETERS), types.ApiCode.GetMessage(types.ApiCode.LCAKPARAMETERS))
-		return
-	}
-
-	identity, ok := c.GetPostForm("identity")
-	if !ok {
-		util.Error(c, int(types.ApiCode.LCAKPARAMETERS), types.ApiCode.GetMessage(types.ApiCode.LCAKPARAMETERS))
-		return
-	}
-	newIdentity, err := strconv.Atoi(identity)
+	userId := c.Param("id")
+	err := c.ShouldBind(&orderDetail)
 	if err != nil {
-		util.Error(c, int(types.ApiCode.CONVERTFAILED), types.ApiCode.GetMessage(types.ApiCode.CONVERTFAILED))
+		Response.ValidatorErr(c, err)
 		return
 	}
-	weddingname, ok := c.GetPostForm("weddingname")
-	if !ok && newIdentity == 1 {
-		util.Error(c, int(types.ApiCode.LCAKPARAMETERS), types.ApiCode.GetMessage(types.ApiCode.LCAKPARAMETERS))
-		return
+	var TempD = make(map[string]*util.TempData)
+	TempD["username"] = &util.TempData{
+		Value: orderDetail.Username,
+		Color: "#173177",
 	}
-	city, ok := c.GetPostForm("city")
+	TempD["phone"] = &util.TempData{
+		Value: orderDetail.Phone,
+		Color: "#173177",
+	}
+	TempD["identity"] = &util.TempData{
+		Value: orderDetail.Identity,
+		Color: "#173177",
+	}
+	TempD["weddingname"] = &util.TempData{
+		Value: orderDetail.Weddingname,
+		Color: "#173177",
+	}
+	TempD["date"] = &util.TempData{
+		Value: orderDetail.Date,
+		Color: "#173177",
+	}
+	TempD["times"] = &util.TempData{
+		Value: orderDetail.Times,
+		Color: "#173177",
+	}
+	TempD["city"] = &util.TempData{
+		Value: orderDetail.City,
+		Color: "#173177",
+	}
+	TempD["address"] = &util.TempData{
+		Value: orderDetail.Address,
+		Color: "#173177",
+	}
+	TempD["remarks"] = &util.TempData{
+		Value: orderDetail.Remarks,
+		Color: "#173177",
+	}
+	go util.SendTemp(TempD)
+	ok := service.CreatOrderService(userId, orderDetail.Username, orderDetail.Phone, orderDetail.Identity, orderDetail.Weddingname, orderDetail.City, orderDetail.Address, orderDetail.Remarks, orderDetail.Times, orderDetail.Date)
 	if !ok {
-		util.Error(c, int(types.ApiCode.LCAKPARAMETERS), types.ApiCode.GetMessage(types.ApiCode.LCAKPARAMETERS))
+		Response.Error(c, Response.ApiCode.CREATEORDERFAILED, Response.ApiCode.GetMessage(Response.ApiCode.CREATEORDERFAILED))
 		return
 	}
-	address := c.PostForm("address")
-
-	remarks := c.PostForm("remarks")
-
-	ok = service.CreatOrderService(username, phone, newIdentity, weddingname, city, address, remarks)
-	if !ok {
-		util.Error(c, int(types.ApiCode.CREATEORDERFAILED), types.ApiCode.GetMessage(types.ApiCode.CREATEORDERFAILED))
-		return
-	}
-	util.Success(c, nil)
+	Response.Success(c, userId)
 
 }
 func GetOrder(c *gin.Context) {
 	orderList := service.GetOrderService()
-	fmt.Println(orderList)
-
-	util.Success(c, orderList)
+	fmt.Println("orderList", orderList)
+	Response.Success(c, orderList)
 }
 
 func GetOrderById(c *gin.Context) {
@@ -75,55 +78,49 @@ func GetOrderById(c *gin.Context) {
 	//	return
 	//}
 
-	newId, err := strconv.Atoi(id)
-	if err != nil {
-		util.Error(c, int(types.ApiCode.CONVERTFAILED), types.ApiCode.GetMessage(types.ApiCode.CONVERTFAILED))
-		return
-	}
+	order := service.GetOrderByIdService(id)
 
-	order := service.GetOrderByIdService(newId)
-
-	util.Success(c, order)
+	Response.Success(c, order)
 }
 func UpdateOrderById(c *gin.Context) {
 	id, ok := c.GetPostForm("id")
 	if !ok {
-		util.Error(c, int(types.ApiCode.LCAKPARAMETERS), types.ApiCode.GetMessage(types.ApiCode.LCAKPARAMETERS))
+		Response.Error(c, Response.ApiCode.LCAKPARAMETERS, Response.ApiCode.GetMessage(Response.ApiCode.LCAKPARAMETERS))
 		return
 	}
 
 	newId, err := strconv.Atoi(id)
 	if err != nil {
-		util.Error(c, int(types.ApiCode.CONVERTFAILED), types.ApiCode.GetMessage(types.ApiCode.CONVERTFAILED))
+		Response.Error(c, Response.ApiCode.CONVERTFAILED, Response.ApiCode.GetMessage(Response.ApiCode.CONVERTFAILED))
 		return
 	}
 
 	username, ok := c.GetPostForm("username")
 	if !ok {
-		util.Error(c, int(types.ApiCode.LCAKPARAMETERS), types.ApiCode.GetMessage(types.ApiCode.LCAKPARAMETERS))
+		Response.Error(c, Response.ApiCode.LCAKPARAMETERS, Response.ApiCode.GetMessage(Response.ApiCode.LCAKPARAMETERS))
 		return
 	}
 
 	phone, ok := c.GetPostForm("phone")
 	if !ok {
-		util.Error(c, int(types.ApiCode.LCAKPARAMETERS), types.ApiCode.GetMessage(types.ApiCode.LCAKPARAMETERS))
+		Response.Error(c, Response.ApiCode.LCAKPARAMETERS, Response.ApiCode.GetMessage(Response.ApiCode.LCAKPARAMETERS))
 		return
 	}
 	if err != nil {
-		util.Error(c, int(types.ApiCode.CONVERTFAILED), types.ApiCode.GetMessage(types.ApiCode.CONVERTFAILED))
+		Response.Error(c, Response.ApiCode.CONVERTFAILED, Response.ApiCode.GetMessage(Response.ApiCode.CONVERTFAILED))
 		return
 	}
 
 	_, ok, err = service.UpdateOrderByIdService(newId, username, phone)
 	if !ok {
-		util.Error(c, int(types.ApiCode.NOSUCHID), types.ApiCode.GetMessage(types.ApiCode.NOSUCHID))
+		Response.Error(c, Response.ApiCode.NOSUCHID, Response.ApiCode.GetMessage(Response.ApiCode.NOSUCHID))
 		return
 	}
 
 	if err != nil {
-		util.Error(c, int(types.ApiCode.FAILED), types.ApiCode.GetMessage(types.ApiCode.FAILED))
+		Response.Error(c, Response.ApiCode.FAILED, Response.ApiCode.GetMessage(Response.ApiCode.FAILED))
 		return
 	}
 
-	util.Success(c, nil)
+	Response.Success(c, nil)
 }
