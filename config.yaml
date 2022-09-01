@@ -1,8 +1,12 @@
-app:
-  host: 127.0.0.1
-  port: 3306
-  username: admin
-  password: admin
-log:
-  suffix: log
-  maxSize: 5
+dev:
+  mysql:
+      host: 39.107.92.94
+      port: 3306
+      username: preside
+      password: hsueh095
+pro:
+  mysql:
+    host: 127.0.0.1
+    port: 3306
+    username: preside
+    password: hsueh095

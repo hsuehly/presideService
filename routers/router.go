@@ -18,5 +18,10 @@ func InitRouter(r *gin.Engine) {
 	{
 		userinfoGroup.GET("/:id", handler.GetUser)
 	}
+	foodGroup := r.Group("/api/v1/menu")
+	{
+		foodGroup.GET("/:id", handler.GetFoodMenu)
+
+	}
 
 }

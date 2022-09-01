@@ -8,24 +8,25 @@ import (
 )
 
 type Config struct {
-	App App `yaml:"app" json:"app"`
-	Log Log `yaml:"log" json:"log"`
+	Dev Dev `yaml:"dev" json:"dev"`
+	Pro Pro `yaml:"pro" json:"pro"`
 }
-type App struct {
-	Host     string `yaml:"host" json:"host"`
+type Dev struct {
+	Mysql Mysql `yaml:"mysql" json:"mysql"`
+}
+type Mysql struct {
+	Host     int    `yaml:"host" json:"host"`
 	Port     int    `yaml:"port" json:"port"`
 	Username string `yaml:"username" json:"username"`
 	Password string `yaml:"password" json:"password"`
 }
 
-type Log struct {
-	Suffix  string `yaml:"suffix" json:"suffix"`
-	MaxSize int    `yaml:"maxSize" json:"maxsize"`
+type Pro struct {
 }
 
 func InitConfigData() {
 	//导入配置文件
-	yamlFile, err := ioutil.ReadFile("./config.yml")
+	yamlFile, err := ioutil.ReadFile("./config.yaml")
 	if err != nil {
 		fmt.Println(err.Error())
 	}
@@ -35,8 +36,7 @@ func InitConfigData() {
 	if err != nil {
 		fmt.Println(err.Error())
 	}
-	username := _config.App.Username
-	fmt.Println("username:" + username)
-	fmt.Printf("config.log: %#v\n", _config.Log)
+	username := _config.Dev.Mysql.Port
+	fmt.Println("username:", username)
 
 }
