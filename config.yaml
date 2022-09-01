@@ -1,12 +1,11 @@
-dev:
-  mysql:
-      host: 39.107.92.94
-      port: 3306
-      username: preside
-      password: hsueh095
-pro:
-  mysql:
-    host: 127.0.0.1
-    port: 3306
-    username: preside
-    password: hsueh095
+mysql:
+  database: "preside"
+  host: "127.0.0.1"
+  port: "3306"
+  username: "root"
+  password: "hsueh095."
+wxConfig:
+      APPID: "wx0aa24b14c3c8143e"
+      APPSECRET: "8e87fd134fc2097fd28a5a19dfa8bc2f"
+      Touser: "oKZFN5jPVELwBH5Lbnl6RW29Tx0c"
+      TemplateId: "Vvgp52lxAgds5mi9sNuX8uldm96c0rgLD5idBpjxLGA"

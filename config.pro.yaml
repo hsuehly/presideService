@@ -1,0 +1,5 @@
+mysql:
+    host: "39.107.92.94"
+    port: 3306
+    username: preside
+    password: hsueh095

@@ -1,6 +1,8 @@
 package db
 
 import (
+	"fmt"
+	"github.com/hsuehly/presideService/config"
 	"time"
 
 	"gorm.io/driver/mysql"
@@ -13,7 +15,8 @@ var dbInstance *gorm.DB
 
 func init() {
 	//dsn := "root:hsueh095.@tcp(127.0.0.1:3306)/preside?charset=utf8mb4&parseTime=True&loc=Local"
-	dsn := "preside:hsueh095@tcp(39.107.92.94:3306)/preside?charset=utf8mb4&parseTime=True&loc=Local"
+	//dsn := "preside:hsueh095@tcp(39.107.92.94:3306)/preside?charset=utf8mb4&parseTime=True&loc=Local"
+	dsn := fmt.Sprintf("%v:%v@tcp(%v:%v)/%v?charset=utf8mb4&parseTime=True&loc=Local", config.Configs.Mysql.Username, config.Configs.Mysql.Password, config.Configs.Mysql.Host, config.Configs.Mysql.Port, config.Configs.Mysql.Database)
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{
 		SkipDefaultTransaction: false,
 		NamingStrategy: schema.NamingStrategy{

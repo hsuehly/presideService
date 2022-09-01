@@ -4,16 +4,11 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"github.com/hsuehly/presideService/config"
 	"io/ioutil"
 	"net/http"
 	"net/url"
 	"time"
-)
-
-const (
-	APPID            = "wx0aa24b14c3c8143e"
-	APPSECRET        = "8e87fd134fc2097fd28a5a19dfa8bc2f"
-	ACCESS_TOKEN_URL = "https://api.weixin.qq.com/cgi-bin/token"
 )
 
 var (
@@ -37,50 +32,6 @@ type WXPushTemp struct {
 	Data       map[string]*TempData `json:"data"`
 }
 
-//
-//func init() {
-//
-//	freshTokenTicker := time.NewTicker(4 * time.Second)
-//	//requestToken()
-//	if access_token == "" && ExpirationTime == 0 {
-//		fmt.Println("空")
-//	}
-//	go func() {
-//
-//		for range freshTokenTicker.C {
-//			fmt.Println("klkl")
-//		}
-//	}()
-//
-//}
-//func main() {
-//
-//	////time.NewTimer时间到了,只响应一次
-//	////创建一个定时器,设置时间为2s,2s后,往time通道写内容(当前时间)
-//	//timer := time.NewTimer(2 * time.Second)
-//	//fmt.Println("当前时间: ", time.Now())
-//	//
-//	////2s后,往timer.c写数据,有数据后,就可以读取
-//	//t := <-timer.C //channel没有数据前后阻塞
-//	//fmt.Println("t = ", t)
-//	//定时2秒,2秒后产生一个事件,往channel里面写内容
-//	//<-time.After(2 * time.Second)
-//	//fmt.Println("时间到")
-//	//timer := time.NewTicker(5 * time.Second)
-//	//for {
-//	//	select {
-//	//	case <-timer.C:
-//	//		go func() {
-//	//			log.Println(time.Now())
-//	//		}()
-//	//	}
-//	//}
-//	//GetAccessToken()
-//	//SendTemp()
-//	for {
-//
-//	}
-//}
 func WxinitData() {
 	//GetAccessToken()
 	freshTokenTicker := time.NewTicker(7000 * time.Second)
@@ -102,14 +53,14 @@ func WxinitData() {
 }
 func GetAccessToken() {
 	client := &http.Client{}
-	request, err := http.NewRequest(http.MethodGet, ACCESS_TOKEN_URL, nil)
+	request, err := http.NewRequest(http.MethodGet, "https://api.weixin.qq.com/cgi-bin/token", nil)
 	if err != nil {
 		fmt.Println("err", err)
 	}
 	query := make(url.Values)
 	query.Add("grant_type", "client_credential")
-	query.Add("appid", APPID)
-	query.Add("secret", APPSECRET)
+	query.Add("appid", config.Configs.WxConfig.AppId)
+	query.Add("secret", config.Configs.WxConfig.AppSecret)
 	request.URL.RawQuery = query.Encode()
 	response, err := client.Do(request)
 	if err != nil {
@@ -138,8 +89,8 @@ func SendTemp(value map[string]*TempData) {
 	//	Color: "#173177",
 	//}
 	var Temp = WXPushTemp{
-		Touser:     "oKZFN5jPVELwBH5Lbnl6RW29Tx0c",
-		TemplateId: "Vvgp52lxAgds5mi9sNuX8uldm96c0rgLD5idBpjxLGA",
+		Touser:     config.Configs.WxConfig.Touser,
+		TemplateId: config.Configs.WxConfig.TemplateId,
 		Url:        "https://www.baidu.com",
 		Topcolor:   "#FF0000",
 		Data:       value,
@@ -153,6 +104,7 @@ func SendTemp(value map[string]*TempData) {
 	if err != nil {
 		fmt.Println("err", err)
 	}
+
 	query := make(url.Values)
 	query.Add("access_token", access_token)
 	request.URL.RawQuery = query.Encode()
@@ -160,7 +112,8 @@ func SendTemp(value map[string]*TempData) {
 	if err != nil {
 		fmt.Println("err", err)
 	}
-	//response.
+	defer response.Body.Close()
+
 	fmt.Println(response.Body, "body")
 
 	fmt.Println(request.URL)
